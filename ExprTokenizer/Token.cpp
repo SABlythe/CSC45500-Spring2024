@@ -2,12 +2,71 @@
 
 using namespace std;
 
-
+static int **DFA=nullptr;
 
 istream&
 Token::read(istream &is)
 {
   // add code here to read in next token ...
+  if (!DFA) // dfa table does not exist yet ...
+    {
+      DFA = new int*[DIVIDE+1];
+      for(int state=NONE; state<=DIVIDE; state++)
+	{
+	  DFA[state] = new int[256];
+	  for (int ch=0; ch<256; ch++)
+	    DFA[state][ch] = ERROR;
+	}
+
+      // all transitions from start state (NONE or 0)
+      for (char ch = '0'; ch<='9'; ch++)
+	DFA[NONE][ (int) ch ] = INTEGER;
+      
+      DFA[NONE][ (int) '(' ] = LPAREN;
+      DFA[NONE][ (int) ')' ] = RPAREN;
+      DFA[NONE][ (int) '+' ] = PLUS;
+      DFA[NONE][ (int) '-' ] = MINUS;
+      DFA[NONE][ (int) '*' ] = MULTIPLY;
+      DFA[NONE][ (int) '/' ] = DIVIDE;
+
+      // all transitions from integer state (INETGER or 1)
+      for (char ch = '0'; ch<='9'; ch++)
+	DFA[INTEGER][ (int) ch ] = INTEGER;
+    }
+
+  
+  // goal fill in _vale from input file
+  //   and _type as token type
+  _value="";
+  char ch;
+
+  // should probably think about skiping white space here ///
+
+
+  int curr=NONE;
+  int prev=ERROR;
+
+  while(curr!=ERROR)
+    {
+      ch = is.get(); // get next char from input
+
+      // move to next state based on character read
+      prev = curr;
+      curr = DFA[curr][(int) ch];
+
+      if (curr!=ERROR) // if caharacter is a valid aprt of token ...
+	{
+	  _value+=ch;  //   ... add char to lexeme's value
+	}
+    }
+
+  _type = prev;
+
+  // we read one extra character ... put it back for the next read()
+  if (is)
+    is.putback(ch);
+  
+  return is;
 }
 
 const string 
