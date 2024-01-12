@@ -34,9 +34,8 @@ Token::read(istream &is)
 	DFA[INTEGER][ (int) ch ] = INTEGER;
     }
 
-  
-  // goal fill in _vale from input file
-  //   and _type as token type
+  // goal: fill in _value from input file
+  //        and _type as token type
   _value="";
   char ch;
 
