@@ -7,7 +7,6 @@ static int **DFA=nullptr;
 istream&
 Token::read(istream &is)
 {
-  // add code here to read in next token ...
   if (!DFA) // dfa table does not exist yet ...
     {
       DFA = new int*[DIVIDE+1];
