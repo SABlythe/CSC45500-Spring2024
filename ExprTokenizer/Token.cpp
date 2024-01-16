@@ -3,6 +3,7 @@
 using namespace std;
 
 static int **DFA=nullptr;
+static int lineNumber=1;
 
 istream&
 Token::read(istream &is)
@@ -39,6 +40,24 @@ Token::read(istream &is)
   char ch;
 
   // should probably think about skiping white space here ///
+/* neat, quick trick to accomplish task in a dirty manner
+  is >> ch;
+  if (!is)
+    return is;
+  is.putback(ch);
+*/
+  ch = is.get(); // get next char from input
+  while (isspace(ch) ) //   || isComment() ...
+  {
+    if (ch=='\n')
+      lineNumber++;
+    ch=is.get();
+  }
+  if (!is)
+    return is;
+  is.putback(ch);
+  
+
 
 
   int curr=NONE;
