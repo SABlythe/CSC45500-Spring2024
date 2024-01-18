@@ -1,5 +1,5 @@
 DBG = #-g	#remove '#' in front on -g to enable debugging
-OPTS = -Wall -ansi -pedantic
+OPTS = -Wall -ansi -pedantic -std=c++20
 CC = g++ -c $(DBG) $(OPTS)
 LN = g++
 
