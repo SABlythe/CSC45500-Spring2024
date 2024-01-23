@@ -20,14 +20,14 @@ int expr2(std::ifstream &is, int incomingValue)
 
   int result = incomingValue;
 
-  int termVal = term(is);
-
   if (pm.type()==PLUS)
     {
+      int termVal = term(is);
       result += termVal;
     }
   else if (pm.type()==MINUS)
     {
+      int termVal = term(is);
       result -= termVal;
     }
   else // epsilon case
@@ -56,14 +56,14 @@ int term2(std::ifstream &is, int incomingValue)
 
   int result = incomingValue;
 
-  int factorVal = factor(is);
-
   if (md.type()==MULTIPLY)
     {
+      int factorVal = factor(is);
       result *= factorVal;
     }
   else if (md.type()==DIVIDE)
     {
+      int factorVal = factor(is);
       result /= factorVal;
     }
   else // epsilon case
@@ -94,12 +94,9 @@ int factor(std::ifstream &is)
 
       return pval;
     }
-  /*  
   else // invalid token to start a factor
     {
       cerr << "Unexpected token: " << tok << endl;
       return 0;
     }
-  */
-  return 0;
 }
