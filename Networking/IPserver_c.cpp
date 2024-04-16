@@ -4,6 +4,7 @@
 
 
 #include <arpa/inet.h>
+#include <pthread.h>
 #include <unistd.h>
 
 using namespace std;
@@ -12,8 +13,14 @@ using namespace std;
 
 int do_server(unsigned int port);
 
-void do_work(unsigned int with_sock, struct sockaddr_in *fromcli);
+//void do_work(unsigned int with_sock, struct sockaddr_in *fromcli);
+void* do_work(void *);
 
+struct do_work_struct
+{
+  unsigned int with_sock;
+  struct sockaddr_in *fromcli;
+};
 
 int main(int argc, char *argv[])
 {
@@ -76,15 +83,27 @@ int do_server(unsigned int port)
 			       &from_len);
       
       // process incoming client
-      do_work(accepted_socket, &from);
+
+      struct do_work_struct *params = new struct do_work_struct;
+      params -> with_sock = accepted_socket;
+      params -> fromcli = &from;
+      
+      pthread_create(new pthread_t, NULL, do_work, params );
     }
   
   return 0;
 }
 
 
-void do_work(unsigned int with_sock, struct sockaddr_in *fromcli)
+void* do_work(void *generic_ptr)
 {
+  struct do_work_struct *actual_ptr = (struct do_work_struct *) generic_ptr;
+
+  unsigned int with_sock;
+  struct sockaddr_in *fromcli;
+  with_sock = actual_ptr -> with_sock;
+  fromcli = actual_ptr -> fromcli; 
+
   string buffer; // the result we are trying to send back to client
   buffer = "Your IP is ";
   buffer += inet_ntoa(fromcli->sin_addr);
@@ -105,4 +124,6 @@ void do_work(unsigned int with_sock, struct sockaddr_in *fromcli)
 
   // close the connected (accepted) socket from server side
   close(with_sock);
+
+  return nullptr;
 }
